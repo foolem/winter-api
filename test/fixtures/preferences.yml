@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sub_area: one
+  creator: one
+  content: MyString
+
+two:
+  sub_area: two
+  creator: two
+  content: MyString

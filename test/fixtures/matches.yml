@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_user: one
+  first_like: false
+  second_user: one
+  second_like: false
+
+two:
+  first_user: two
+  first_like: false
+  second_user: two
+  second_like: false
