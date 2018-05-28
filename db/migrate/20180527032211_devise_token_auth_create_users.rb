@@ -47,7 +47,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.1]
       t.integer :sex_preference
       t.text    :about
       t.date    :birthday
-
+      t.references :location
       t.timestamps
     end
 

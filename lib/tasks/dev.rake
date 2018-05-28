@@ -2,6 +2,11 @@ namespace :dev do
   desc "Inserts fake data on db"
   task fake_data: :environment do
 
+    puts "Inserting new locations"
+
+    Location.create(city: "Curitiba", state: "PR", country: "Brazil")
+    Location.create(city: "São Paulo", state: "SP", country: "Brazil")
+
     puts "Inserting new users"
     10.times do
       User.create(
@@ -12,12 +17,13 @@ namespace :dev do
         birthday: Faker::Date.birthday,
         sex: [0,1,2].sample,
         sex_preference: [0,1,2].sample,
-        about: Faker::Hobbit.quote
+        about: Faker::Hobbit.quote,
+        location_id: [1,2].sample
       )
     end
 
     puts "Inserting new areas"
-    ["Cinema", "Arte", "Esportes", "Hobbies", "Séries", "Signos"].each do |a|
+    ["Cinema", "Arte", "Esportes", "Hobbies", "Séries"].each do |a|
       Area.create(
         name: a
       )
@@ -27,7 +33,6 @@ namespace :dev do
     SubArea.create(name: "Pintores", area: Area.find(2), sub_area: SubArea.first)
     Preference.create(content: "Van Gogh", sub_area: SubArea.last)
     Preference.create(content: "Picasso", sub_area: SubArea.last)
-
     SubArea.create(name: "Diretores", area: Area.find(1))
     Preference.create(content: "Quentin Tarantino", sub_area: SubArea.last)
     Preference.create(content: "Peter Jackson", sub_area: SubArea.last)

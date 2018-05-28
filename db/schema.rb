@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180527032606) do
+ActiveRecord::Schema.define(version: 20180527224213) do
 
   create_table "areas", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
@@ -23,6 +23,17 @@ ActiveRecord::Schema.define(version: 20180527032606) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["match_id"], name: "index_chats_on_match_id"
+  end
+
+  create_table "locations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "address"
+    t.float "latitude", limit: 24
+    t.float "logitude", limit: 24
+    t.string "city"
+    t.string "country"
+    t.string "state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "matches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -58,11 +69,6 @@ ActiveRecord::Schema.define(version: 20180527032606) do
     t.index ["sub_area_id"], name: "index_preferences_on_sub_area_id"
   end
 
-  create_table "preferences_users", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "user_id", null: false
-    t.bigint "preference_id", null: false
-  end
-
   create_table "sub_areas", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
     t.bigint "area_id"
@@ -71,6 +77,15 @@ ActiveRecord::Schema.define(version: 20180527032606) do
     t.datetime "updated_at", null: false
     t.index ["area_id"], name: "index_sub_areas_on_area_id"
     t.index ["sub_area_id"], name: "index_sub_areas_on_sub_area_id"
+  end
+
+  create_table "user_preferences", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "user_id"
+    t.bigint "preference_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["preference_id"], name: "index_user_preferences_on_preference_id"
+    t.index ["user_id"], name: "index_user_preferences_on_user_id"
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -91,7 +106,6 @@ ActiveRecord::Schema.define(version: 20180527032606) do
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
     t.string "name"
-    t.string "nickname"
     t.string "image"
     t.string "email"
     t.text "tokens"
@@ -99,10 +113,12 @@ ActiveRecord::Schema.define(version: 20180527032606) do
     t.integer "sex_preference"
     t.text "about"
     t.date "birthday"
+    t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["location_id"], name: "index_users_on_location_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end

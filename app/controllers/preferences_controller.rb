@@ -1,6 +1,6 @@
 class PreferencesController < ApplicationController
   before_action :set_preference, only: [:show, :update, :destroy]
-
+  before_action :authenticate_user!
   # GET /preferences
   def index
     @preferences = Preference.all
