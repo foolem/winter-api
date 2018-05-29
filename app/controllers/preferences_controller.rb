@@ -16,6 +16,9 @@ class PreferencesController < ApplicationController
   # POST /preferences
   def create
     @preference = Preference.new(preference_params)
+    
+    @preference.update(creator_id: current_user.id)
+    current_user.preferences << @preference
 
     if @preference.save
       render json: @preference, status: :created, location: @preference

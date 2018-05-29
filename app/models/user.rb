@@ -20,6 +20,46 @@ class User < ActiveRecord::Base
     (self.matches & user.matches).blank? ? false : true
   end
 
+  def like(user)
+    match_first = Match.where(first_user: self, second_user: user)
+    match_second = Match.where(first_user_id: user, second_user: self)
+    if match_first.blank?
+      if match_second.blank?
+        Match.create(first_user: self, first_like: true, second_user: user)
+      else
+        match_second.first.update(second_like: true)
+        if match_second.first.match?
+          match_second.first.create_chat
+          return match_second.first
+        end
+      end
+    else
+      match_first.first.update(first_like: true)
+      if match_first.first.match?
+        match_first.first.create_chat
+        return match_first.first
+      end
+    end
+  end
+
+  def reject(user)
+    match_first = Match.where(first_user: self, second_user: user)
+    match_second = Match.where(first_user: user, second_user: self)
+    if match_first.blank?
+      if match_second.blank?
+        Match.create(first_user: self, first_like: false, second_user: user)
+      else
+        match_second.first.update(second_like: false)
+      end
+    else
+      match_first.first.update(first_like: false)
+    end
+  end
+
+  def single_user_timeline
+    return timeline.first
+  end
+
   def timeline
     matchable = []
     users = []
