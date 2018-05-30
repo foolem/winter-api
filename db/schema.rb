@@ -114,6 +114,8 @@ ActiveRecord::Schema.define(version: 20180527224213) do
     t.text "about"
     t.date "birthday"
     t.bigint "location_id"
+    t.boolean "seen_top_5"
+    t.datetime "seen_top_5_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true

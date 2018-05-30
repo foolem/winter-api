@@ -48,6 +48,9 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[5.1]
       t.text    :about
       t.date    :birthday
       t.references :location
+      t.boolean :seen_top_5
+      t.datetime :seen_top_5_time
+
       t.timestamps
     end
 

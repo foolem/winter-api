@@ -31,6 +31,8 @@ gem 'devise_token_auth'
 gem 'faker'
 # Better rails c
 gem 'pry-rails'
+# Ruby missing time dealing method
+gem 'time_difference'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
