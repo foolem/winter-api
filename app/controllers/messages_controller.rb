@@ -1,6 +1,6 @@
 class MessagesController < ApplicationController
   before_action :set_message, only: [:show, :update, :destroy]
-
+  before_action :authenticate_user!
   # GET /messages
   def index
     @messages = Message.all
@@ -41,11 +41,11 @@ class MessagesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_message
-      @message = Message.find(params[:id])
+      @message = Message.find(params[:id].to_i)
     end
 
     # Only allow a trusted parameter "white list" through.
     def message_params
-      params.require(:message).permit(:chat_id, :user_id, :content)
+      params.require(:message).permit(:user_id, :chat_id, :content)
     end
 end

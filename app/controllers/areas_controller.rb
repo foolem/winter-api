@@ -1,6 +1,6 @@
 class AreasController < ApplicationController
-  before_action :set_area, only: [:show, :update, :destroy]
-
+  before_action :set_area, only: [:show, :update, :destroy, :sub_areas]
+  before_action :authenticate_user!
   # GET /areas
   def index
     @areas = Area.all
@@ -36,6 +36,10 @@ class AreasController < ApplicationController
   # DELETE /areas/1
   def destroy
     @area.destroy
+  end
+
+  def sub_areas
+    render json: @area.sub_areas
   end
 
   private

@@ -1,4 +1,4 @@
 class Chat < ApplicationRecord
-  belongs_to :match
-  has_many :messages
+  belongs_to :match, dependent: :destroy
+  has_many :messages, dependent: :destroy
 end

@@ -5,11 +5,13 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
   include DeviseTokenAuth::Concerns::User
 
-  has_many :messages
+  has_many :messages, dependent: :destroy
   has_many :matches
-  has_many :user_preferences
+  has_many :user_preferences, dependent: :destroy
   has_many :preferences, through: :user_preferences
   belongs_to :location, optional: true
+
+  before_destroy :destroy_matches_and_chats
 
   def matches
     matches = Match.where(first_user: self, first_like: true, second_like: true)
@@ -29,17 +31,18 @@ class User < ActiveRecord::Base
       self.update(seen_top_5: false)
       return true
     else
-      phrase = "Você ainda não pode visualizar os 5 melhores! Espere #{24 - TimeDifference.between(Time.current, self.seen_top_5_time).in_hours}"
-      return false
+      phrase = "Você ainda não pode visualizar os 5 melhores! Espere #{(24 - TimeDifference.between(Time.current, self.seen_top_5_time).in_hours).to_i}h:#{(60 - TimeDifference.between(Time.current, self.seen_top_5_time).in_minutes).to_i}m"
+      return phrase
     end
   end
 
   def like(user)
     match_first = Match.where(first_user: self, second_user: user)
-    match_second = Match.where(first_user_id: user, second_user: self)
+    match_second = Match.where(first_user: user, second_user: self)
     if match_first.blank?
       if match_second.blank?
         Match.create(first_user: self, first_like: true, second_user: user)
+        return true
       else
         match_second.first.update(second_like: true)
         if match_second.first.match?
@@ -54,6 +57,7 @@ class User < ActiveRecord::Base
         return match_first.first
       end
     end
+    return false
   end
 
   def reject(user)
@@ -74,19 +78,27 @@ class User < ActiveRecord::Base
     return timeline.first
   end
 
+  def same_sex_preference(user)
+    (self.sex_preference == user.sex || self.sex_preference == 2) ? true : false
+  end
+
   def timeline
     matchable = []
     users = []
     User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
-      if !has_match?(user)
+      if (same_sex_preference(user) && !has_match?(user))
         common = self.preferences & user.preferences
         matchable.push({ "user": user, "rank": common.size })
       end
     end
-    matchable.sort_by{ |r| r[:rank] }.reverse.each do |m|
-      users.push m[:user]
+    if !matchable.blank?
+      matchable.sort_by{ |r| r[:rank] }.reverse.each do |m|
+        users.push m[:user]
+      end
+      users
+    else
+      return false
     end
-    users
   end
 
   def top_5
@@ -95,6 +107,31 @@ class User < ActiveRecord::Base
     else
       self.update(seen_top_5: true, seen_top_5_time: Time.current)
       return timeline[0..4]
+    end
+  end
+
+  private
+
+  def destroy_matches_and_chats
+    Match.where(first_user: self).each do |m|
+      if !m.chat.blank?
+        c = m.chat
+        m.update(chat: nil)
+        c.update(match: nil)
+        Message.where(chat: c).destroy_all
+        c.destroy
+      end
+      m.destroy
+    end
+    Match.where(second_user: self).each do |m|
+      if !m.chat.blank?
+        c = m.chat
+        m.update(chat: nil)
+        c.update(match: nil)
+        Message.where(chat: c).destroy_all
+        c.destroy
+      end
+      m.destroy
     end
   end
 
