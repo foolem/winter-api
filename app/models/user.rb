@@ -85,9 +85,9 @@ class User < ActiveRecord::Base
   def timeline
     matchable = []
     users = []
-    User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
+    User.where.not(id: self.id).limit(5).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
       if (same_sex_preference(user) && !has_match?(user))
-        common = self.preferences & user.preferences
+        common = common_preferences(user)
         matchable.push({ "user": user, "rank": common.size })
       end
     end
@@ -108,6 +108,21 @@ class User < ActiveRecord::Base
       self.update(seen_top_5: true, seen_top_5_time: Time.current)
       return timeline[0..4]
     end
+  end
+
+  def common_preferences(user)
+    user = is_user_integer?(user)
+    self.preferences & user.preferences
+  end
+
+  def age(user)
+    user = is_user_integer?(user)
+    now = Time.current.to_date
+    now.year - user.birthday.year - ((now.month > user.birthday.month || (now.month == user.birthday.month && now.day >= user.birthday.day)) ? 0 : 1)
+  end
+
+  def is_user_integer?(user)
+    !(user.is_a? Integer) ? user : user = User.find(user)
   end
 
   private

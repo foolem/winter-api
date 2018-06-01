@@ -8,7 +8,7 @@ namespace :dev do
     Location.create(city: "São Paulo", state: "SP", country: "Brazil")
 
     puts "Inserting new users"
-    10.times do
+    50.times do
       User.create(
         name: Faker::Name.name,
         email: Faker::Internet.email,
