@@ -13,6 +13,14 @@ class User < ActiveRecord::Base
 
   before_destroy :destroy_matches_and_chats
 
+  def self.current
+    Thread.current[:user]
+  end
+
+  def self.current=(user)
+    Thread.current[:user] = user
+  end
+
   def matches
     matches = Match.where(first_user: self, first_like: true, second_like: true)
     matches += Match.where(second_user: self, first_like: true, second_like: true)
@@ -85,7 +93,7 @@ class User < ActiveRecord::Base
   def timeline
     matchable = []
     users = []
-    User.where.not(id: self.id).limit(5).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
+    User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).limit(5).each do |user|
       if (same_sex_preference(user) && !has_match?(user))
         common = common_preferences(user)
         matchable.push({ "user": user, "rank": common.size })
@@ -103,7 +111,7 @@ class User < ActiveRecord::Base
 
   def top_5
     if !reset_top_5 || seen_top_5?
-      return "Você já visualizou os 5 melhores do dia!"
+      return false
     else
       self.update(seen_top_5: true, seen_top_5_time: Time.current)
       return timeline[0..4]
@@ -112,7 +120,20 @@ class User < ActiveRecord::Base
 
   def common_preferences(user)
     user = is_user_integer?(user)
-    self.preferences & user.preferences
+    common = self.preferences & user.preferences
+    result = []
+    common.each do |c|
+      result.push({ id: c.id, sub_area_id: c.sub_area_id, area_id: c.sub_area.area_id, content: c.content })
+    end
+    result.to_json
+  end
+
+  def user_preferences
+    preferences = []
+    self.preferences.each do |preference|
+      preferences.push({ id: preference.id, sub_area_id: preference.sub_area_id, area_id: preference.sub_area.area_id, content: preference.content })
+    end
+    preferences.to_json
   end
 
   def age(user)

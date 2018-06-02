@@ -1,8 +1,9 @@
 class UsersController < ApplicationController
-  before_action :set_preference, only: [:choose_preference]
+  before_action :set_preference, only: :choose_preference
   before_action :set_user, only: [:like, :reject]
-  before_action :set_chat, only: [:chat_messages]
+  before_action :set_chat, only: :chat_messages
   before_action :authenticate_user!
+  before_action :set_current_user, only: :matches
 
   def timeline
     render json: current_user.timeline
@@ -13,15 +14,15 @@ class UsersController < ApplicationController
   end
 
   def matches
-    render json: current_user.matches
+    render json: current_user.matches, each_serializer: UserMatchesSerializer
   end
 
   def chat_messages
-    render json: @chat.messages
+    render json: @chat.messages, each_serializer: ChatMessagesSerializer
   end
 
   def preferences
-    render json: current_user.preferences
+    render json: current_user.user_preferences, each_serializer: UserPreferencesSerializer
   end
 
   def like
@@ -35,13 +36,12 @@ class UsersController < ApplicationController
   end
 
   def choose_preference
-    current_user.preferences << @preference
-    render json: current_user.preferences
+    current_user.preferences << @preference if !(current_user.preferences.include?(@preference))
+    render json: current_user.user_preferences, each_serializer: UserPreferencesSerializer
   end
 
   def top_5
-    result = current_user.top_5
-    render json: result.to_json
+    render json: current_user.top_5
   end
 
   def destroy

@@ -11,4 +11,8 @@ class Match < ApplicationRecord
     match? ? self.update(chat: Chat.create!(match: self)) : false
   end
 
+  def matched_user_name
+    self.first_user != User.current ? self.first_user.name : self.second_user.name
+  end
+
 end
