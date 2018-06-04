@@ -5,12 +5,12 @@ class MessagesController < ApplicationController
   def index
     @messages = Message.all
 
-    render json: @messages
+    render json: @messages, each_serializer: MessageSerializer
   end
 
   # GET /messages/1
   def show
-    render json: @message
+    render json: @message, serializer: MessageSerializer
   end
 
   # POST /messages
@@ -18,7 +18,7 @@ class MessagesController < ApplicationController
     @message = Message.new(message_params)
 
     if @message.save
-      render json: @message, status: :created, location: @message
+      render json: @message, status: :created, serializer: MessageSerializer
     else
       render json: @message.errors, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class MessagesController < ApplicationController
   # PATCH/PUT /messages/1
   def update
     if @message.update(message_params)
-      render json: @message
+      render json: @message, serializer: MessageSeralizer
     else
       render json: @message.errors, status: :unprocessable_entity
     end

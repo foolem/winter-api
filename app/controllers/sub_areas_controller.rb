@@ -5,12 +5,12 @@ class SubAreasController < ApplicationController
   def index
     @sub_areas = SubArea.all
 
-    render json: @sub_areas
+    render json: @sub_areas, each_serializer: SubAreaSerializer
   end
 
   # GET /sub_areas/1
   def show
-    render json: @sub_area
+    render json: @sub_area, serializer: SubAreaSerializer
   end
 
   # POST /sub_areas
@@ -18,7 +18,7 @@ class SubAreasController < ApplicationController
     @sub_area = SubArea.new(sub_area_params)
 
     if @sub_area.save
-      render json: @sub_area, status: :created, location: @sub_area
+      render json: @sub_area, status: :created, serializer: SubAreaSerializer
     else
       render json: @sub_area.errors, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class SubAreasController < ApplicationController
   # PATCH/PUT /sub_areas/1
   def update
     if @sub_area.update(sub_area_params)
-      render json: @sub_area
+      render json: @sub_area, serializer: SubAreaSerializer
     else
       render json: @sub_area.errors, status: :unprocessable_entity
     end
@@ -39,7 +39,7 @@ class SubAreasController < ApplicationController
   end
 
   def preferences
-    render json: @sub_area.preferences
+    render json: @sub_area.preferences, status: :ok, each_serializer: PreferenceSerializer
   end
 
   private

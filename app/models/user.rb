@@ -49,14 +49,15 @@ class User < ActiveRecord::Base
     match_second = Match.where(first_user: user, second_user: self)
     if match_first.blank?
       if match_second.blank?
-        Match.create(first_user: self, first_like: true, second_user: user)
-        return true
+        m = Match.create(first_user: self, first_like: true, second_user: user)
+        return m
       else
         match_second.first.update(second_like: true)
         if match_second.first.match?
           match_second.first.create_chat
           return match_second.first
         end
+        return match_second.first
       end
     else
       match_first.first.update(first_like: true)
@@ -64,8 +65,8 @@ class User < ActiveRecord::Base
         match_first.first.create_chat
         return match_first.first
       end
+      return match_first.first
     end
-    return false
   end
 
   def reject(user)
@@ -73,12 +74,14 @@ class User < ActiveRecord::Base
     match_second = Match.where(first_user: user, second_user: self)
     if match_first.blank?
       if match_second.blank?
-        Match.create(first_user: self, first_like: false, second_user: user)
+        m = Match.create(first_user: self, first_like: false, second_user: user)
       else
         match_second.first.update(second_like: false)
+        match_second.first
       end
     else
       match_first.first.update(first_like: false)
+      match_first.first
     end
   end
 
@@ -126,14 +129,6 @@ class User < ActiveRecord::Base
       result.push({ id: c.id, sub_area_id: c.sub_area_id, area_id: c.sub_area.area_id, content: c.content })
     end
     result.to_json
-  end
-
-  def user_preferences
-    preferences = []
-    self.preferences.each do |preference|
-      preferences.push({ id: preference.id, sub_area_id: preference.sub_area_id, area_id: preference.sub_area.area_id, content: preference.content })
-    end
-    preferences.to_json
   end
 
   def age(user)

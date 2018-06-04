@@ -5,12 +5,12 @@ class ChatsController < ApplicationController
   def index
     @chats = Chat.all
 
-    render json: @chats
+    render json: @chats, each_serializer: ChatSerializer
   end
 
   # GET /chats/1
   def show
-    render json: @chat
+    render json: @chat, serializer: ChatSerializer
   end
 
   # POST /chats
@@ -18,7 +18,7 @@ class ChatsController < ApplicationController
     @chat = Chat.new(chat_params)
 
     if @chat.save
-      render json: @chat, status: :created, location: @chat
+      render json: @chat, status: :created, serializer: ChatSerializer
     else
       render json: @chat.errors, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class ChatsController < ApplicationController
   # PATCH/PUT /chats/1
   def update
     if @chat.update(chat_params)
-      render json: @chat
+      render json: @chat, serializer: ChatSerializer
     else
       render json: @chat.errors, status: :unprocessable_entity
     end

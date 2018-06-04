@@ -1,16 +1,16 @@
 class MatchesController < ApplicationController
   before_action :set_match, only: [:show, :update, :destroy]
-  
+
   # GET /matches
   def index
     @matches = Match.all
 
-    render json: @matches
+    render json: @matches, each_serializer: MatchSerializer
   end
 
   # GET /matches/1
   def show
-    render json: @match
+    render json: @match, serializer: MatchSerializer
   end
 
   # POST /matches
@@ -18,7 +18,7 @@ class MatchesController < ApplicationController
     @match = Match.new(match_params)
 
     if @match.save
-      render json: @match, status: :created, location: @match
+      render json: @match, status: :created, serializer: MatchSerializer
     else
       render json: @match.errors, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class MatchesController < ApplicationController
   # PATCH/PUT /matches/1
   def update
     if @match.update(match_params)
-      render json: @match
+      render json: @match, serializer: MatchSerializer
     else
       render json: @match.errors, status: :unprocessable_entity
     end

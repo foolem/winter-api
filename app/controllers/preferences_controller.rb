@@ -5,23 +5,23 @@ class PreferencesController < ApplicationController
   def index
     @preferences = Preference.all
 
-    render json: @preferences
+    render json: @preferences, each_serializer: PreferenceSerializer
   end
 
   # GET /preferences/1
   def show
-    render json: @preference
+    render json: @preference, serializer: PreferenceSerializer
   end
 
   # POST /preferences
   def create
     @preference = Preference.new(preference_params)
-    
+
     @preference.update(creator_id: current_user.id)
     current_user.preferences << @preference
 
     if @preference.save
-      render json: @preference, status: :created, location: @preference
+      render json: @preference, status: :created, serializer: PreferenceSerializer
     else
       render json: @preference.errors, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class PreferencesController < ApplicationController
   # PATCH/PUT /preferences/1
   def update
     if @preference.update(preference_params)
-      render json: @preference
+      render json: @preference, serializer: PreferenceSerializer
     else
       render json: @preference.errors, status: :unprocessable_entity
     end

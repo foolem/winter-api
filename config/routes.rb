@@ -15,14 +15,14 @@ Rails.application.routes.draw do
   end
   resources :sub_areas do
     collection do
-      match 'preferences/:id', to: 'sub_areas#preferences', via: :get, as: 'sub_areas_preferences'
+      match '/:id/preferences', to: 'sub_areas#preferences', via: :get, as: 'sub_areas_preferences'
     end
   end
   scope '/user' do
     match 'timeline', to: 'users#timeline', via: :get, as: 'user_timeline'
     match 'single_user_timeline', to: 'users#single_user_timeline', via: :get, as: 'user_single_user_timeline'
     match 'matches', to: 'users#matches', via: :get, as: 'user_matches'
-    match 'chat/:chat_id/messages', to: 'users#chat_messages', via: :get, as: 'user_chat_messages'
+    match 'matches/:match_id/messages', to: 'users#chat_messages', via: :get, as: 'user_chat_messages'
     match 'preferences', to: 'users#preferences', via: :get, as: 'user_preferences'
     match 'top_5', to: 'users#top_5', via: :get, as: 'user_top_5'
     match 'like/:id', to: 'users#like', via: :post, as: 'user_like'
