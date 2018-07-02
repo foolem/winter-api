@@ -26,8 +26,13 @@ class User < ActiveRecord::Base
     matches += Match.where(second_user: self, first_like: true, second_like: true)
   end
 
+  def possibly_matches
+    matches = Match.where(first_user: self)
+    matches += Match.where(second_user: self)
+  end
+
   def has_match?(user)
-    (self.matches & user.matches).blank? ? false : true
+    (self.possibly_matches & user.possibly_matches).blank? ? false : true
   end
 
   def seen_top_5?
@@ -86,7 +91,8 @@ class User < ActiveRecord::Base
   end
 
   def single_user_timeline
-    return timeline.first
+    return timeline.first if timeline != false
+    return {"error": "Ninguém para dar like"}
   end
 
   def same_sex_preference(user)

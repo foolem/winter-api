@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   end
 
   def single_user_timeline
-    render json: current_user.single_user_timeline, serializer: UserSerializer
+    render json: current_user.single_user_timeline, each_serializer: UserSerializer
   end
 
   def matches

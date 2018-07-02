@@ -37,6 +37,17 @@ namespace :dev do
     Preference.create(content: "Quentin Tarantino", sub_area: SubArea.last)
     Preference.create(content: "Peter Jackson", sub_area: SubArea.last)
 
+    User.create(
+      name: 'Filipe',
+      email: 'foolemdev@gmail.com',
+      password: 123123123,
+      password_confirmation: 123123123,
+      birthday: Faker::Date.birthday,
+      sex: 0,
+      sex_preference: 2,
+      about: Faker::Hobbit.quote,
+      location_id: 1
+    )
 
   end
 
