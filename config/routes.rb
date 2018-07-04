@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     match 'matches', to: 'users#matches', via: :get, as: 'user_matches'
     match 'matches/:match_id/messages', to: 'users#chat_messages', via: :get, as: 'user_chat_messages'
     match 'preferences', to: 'users#preferences', via: :get, as: 'user_preferences'
+    match 'common_preferences/:id', to: 'users#common_preferences', via: :get, as: 'user_common_preferences'
     match 'top_5', to: 'users#top_5', via: :get, as: 'user_top_5'
     match 'like/:id', to: 'users#like', via: :post, as: 'user_like'
     match 'reject/:id', to: 'users#reject', via: :post, as: 'user_reject'

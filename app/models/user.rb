@@ -102,10 +102,16 @@ class User < ActiveRecord::Base
   def timeline
     matchable = []
     users = []
-    User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).limit(5).each do |user|
-      if (same_sex_preference(user) && !has_match?(user))
+    count = 0
+    User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
+      if (same_sex_preference(user) && !has_match?(user) && count < 5)
         common = common_preferences(user)
         matchable.push({ "user": user, "rank": common.size })
+        count += 1
+      elsif (count < 5)
+        next
+      else
+        break
       end
     end
     if !matchable.blank?

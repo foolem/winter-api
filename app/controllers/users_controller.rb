@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_preference, only: :choose_preference
-  before_action :set_user, only: [:like, :reject]
+  before_action :set_user, only: [:like, :reject, :common_preferences]
   before_action :set_chat, only: :chat_messages
   before_action :authenticate_user!
   before_action :set_current_user, only: :matches
@@ -23,6 +23,10 @@ class UsersController < ApplicationController
 
   def preferences
     render json: current_user.preferences, each_serializer: PreferenceSerializer
+  end
+
+  def common_preferences
+    render json: current_user.common_preferences(@user), each_serializer: PreferenceSerializer
   end
 
   def like
