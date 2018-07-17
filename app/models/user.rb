@@ -31,8 +31,24 @@ class User < ActiveRecord::Base
     matches += Match.where(second_user: self)
   end
 
+  def has_possibly_match?(user)
+    matches = Match.where(first_user: self, second_user: user)
+    matches += Match.where(first_user: user, second_user: self)
+    (matches.blank?) ? false : true
+  end
+
+  def user_not_liked(user)
+    matches = Match.where(first_user: self, first_like: true, second_user: user)
+    matches += Match.where(first_user: user, second_like: true, second_user: self)
+    matches += Match.where(first_user: self, first_like: false, second_user: user)
+    matches += Match.where(first_user: user, second_like: false, second_user: self)
+    (matches.blank?) ? true : false
+  end
+
   def has_match?(user)
-    (self.possibly_matches & user.possibly_matches).blank? ? false : true
+    matches = Match.where(first_user: self, first_like: true, second_user: user, second_like: true)
+    matches += Match.where(second_user: self, first_like: true, first_user: user, second_like: true)
+    (matches.blank?) ? false : true
   end
 
   def seen_top_5?
@@ -104,7 +120,8 @@ class User < ActiveRecord::Base
     users = []
     count = 0
     User.where.not(id: self.id).joins(:location).merge(Location.where(city: self.location.city)).each do |user|
-      if (same_sex_preference(user) && !has_match?(user) && count < 5)
+      if (same_sex_preference(user) && user_not_liked(user) && !has_match?(user) && count < 5)
+        puts user
         common = common_preferences(user)
         matchable.push({ "user": user, "rank": common.size })
         count += 1

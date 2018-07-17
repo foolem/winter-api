@@ -31,12 +31,12 @@ class UsersController < ApplicationController
 
   def like
     result = current_user.like(@user)
-    render json: result, serializer: MatchSerializer
+    render json: result, each_serializer: MatchSerializer
   end
 
   def reject
     result = current_user.reject(@user)
-    render json: result, serializer: MatchSerializer
+    render json: result, each_serializer: MatchSerializer
   end
 
   def choose_preference
