@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     match 'like/:id', to: 'users#like', via: :post, as: 'user_like'
     match 'reject/:id', to: 'users#reject', via: :post, as: 'user_reject'
     match 'choose_preference/:id', to: 'users#choose_preference', via: :post, as: 'user_choose_preference'
+    match 'info/:id', to: 'users#info', via: :get, as: 'user_info'
   end
 
 

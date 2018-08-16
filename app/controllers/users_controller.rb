@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_preference, only: :choose_preference
-  before_action :set_user, only: [:like, :reject, :common_preferences]
+  before_action :set_user, only: [:like, :reject, :common_preferences, :info]
   before_action :set_chat, only: :chat_messages
   before_action :authenticate_user!
   before_action :set_current_user, only: :matches
@@ -11,6 +11,13 @@ class UsersController < ApplicationController
 
   def single_user_timeline
     render json: current_user.single_user_timeline, each_serializer: UserSerializer
+  end
+
+  def info
+    puts @user.id
+    puts @user.name
+
+    render json: @user, serializer: UserSerializer
   end
 
   def matches

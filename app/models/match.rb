@@ -15,4 +15,8 @@ class Match < ApplicationRecord
     self.first_user != User.current ? self.first_user.name : self.second_user.name
   end
 
+  def matched_user_id
+    self.first_user != User.current ? self.first_user.id : self.second_user.id
+  end
+
 end
